@@ -53,12 +53,27 @@ $${crono_DEFINES} \
 # crono_exe HEADERS
 #
 crono_exe_HEADERS += \
+$${NADIR_SRC}/xos/base/Locked.hpp \
+$${NADIR_SRC}/xos/console/Io.hpp \
+$${NADIR_SRC}/xos/console/Main.hpp \
+$${CRONO_SRC}/xos/logger/Level.hpp \
+$${CRONO_SRC}/xos/logger/Output.hpp \
+$${CRONO_SRC}/xos/logger/Interface.hpp \
+$${CRONO_SRC}/xos/console/Logger.hpp \
 $${CRONO_SRC}/xos/console/Main_main.hpp \
+$${CRONO_SRC}/xos/app/console/crono/Main.hpp \
 
 # crono_exe SOURCES
 #
 crono_exe_SOURCES += \
+$${NADIR_SRC}/xos/base/Locked.cpp \
+$${NADIR_SRC}/xos/console/Io.cpp \
+$${CRONO_SRC}/xos/logger/Level.cpp \
+$${CRONO_SRC}/xos/logger/Output.hpp \
+$${CRONO_SRC}/xos/logger/Interface.cpp \
+$${CRONO_SRC}/xos/console/Logger.cpp \
 $${CRONO_SRC}/xos/console/Main_main.cpp \
+$${CRONO_SRC}/xos/app/console/crono/Main.cpp \
 
 ########################################################################
 # crono_exe FRAMEWORKS
