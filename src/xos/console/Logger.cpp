@@ -13,36 +13,20 @@
 /// or otherwise) arising in any way out of the use of this software, 
 /// even if advised of the possibility of such damage.
 ///
-///   File: Main_main.cpp
+///   File: Logger.cpp
 ///
 /// Author: $author$
-///   Date: 4/19/2018
+///   Date: 4/20/2018
 ///////////////////////////////////////////////////////////////////////
-#include "xos/console/Main_main.hpp"
 #include "xos/console/Logger.hpp"
 
 namespace xos {
 namespace console {
 
+///////////////////////////////////////////////////////////////////////
+///  Class: LoggerT
+///////////////////////////////////////////////////////////////////////
+
 } /// namespace console
 } /// namespace xos
 
-///////////////////////////////////////////////////////////////////////
-/// Function: main
-///////////////////////////////////////////////////////////////////////
-int main(int argc, char** argv, char** env) {
-    int err = 1;
-    ERR_LOG_DEBUG("try {...");
-    try {
-        ::xos::console::Logger logger;
-        
-        LOG_DEBUG("::xos::console::Main::TheMain(argc, argv, env)...");
-        err = ::xos::console::Main::TheMain(argc, argv, env);
-        LOG_DEBUG("..." << err << " = ::xos::console::Main::TheMain(argc, argv, env)...");
-
-        ERR_LOG_DEBUG("...} try");
-    } catch (...) {
-        ERR_LOG_ERROR("...catch (...)");
-    }
-    return err;
-}

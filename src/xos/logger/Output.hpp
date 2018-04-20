@@ -41,56 +41,56 @@ public:
     typedef const char_t* const_chars_t;
 
 protected:
-    virtual void Log(const Location& _location) {
+    virtual void Out(const Location& _location) {
         string_t beforeFileName(""), afterFileName(""),
                  beforeLineNumber("["), afterLineNumber("]"),
                  beforeFunctionName(" "), afterFunctionName(" ");
-        LogL
+        OutL
         (beforeFileName.c_str(), _location.FileName().c_str(), afterFileName.c_str(),
          beforeLineNumber.c_str(), _location.LineNumber().c_str(), afterLineNumber.c_str(),
          beforeFunctionName.c_str(), _location.FunctionName().c_str(), afterFunctionName.c_str(), NULL);
     }
-    virtual void Log(const Function& _function) {
-        Log(_function.c_str());
-        Log(": ");
+    virtual void Out(const Function& _function) {
+        Out(_function.c_str());
+        Out(": ");
     }
-    virtual void Log(const Message& _message) {
-        Log(_message.c_str());
+    virtual void Out(const Message& _message) {
+        Out(_message.c_str());
     }
-    virtual void LogL(const char_t* chars, ...) {
+    virtual void OutL(const char_t* chars, ...) {
         va_list va;
         va_start(va, chars);
-        LogV(chars, va);
+        OutV(chars, va);
         va_end(va);
     }
-    virtual void LogV(const char_t* chars, va_list va) {
+    virtual void OutV(const char_t* chars, va_list va) {
         while (chars) {
-            Log(chars);
+            Out(chars);
             chars = va_arg(va, const_chars_t);
         }
     }
-    virtual void Log(const char_t* chars, size_t length) {
+    virtual void Out(const char_t* chars, size_t length) {
         if ((chars) && (length)) {
             for (char_t c = *(chars); length; --length, c = *(++chars)) {
-                Log(c);
+                Out(c);
             }
         }
     }
-    virtual void Log(const char_t* chars) {
+    virtual void Out(const char_t* chars) {
         if ((chars)) {
             for (char_t c = *(chars); c; c = *(++chars)) {
-                Log(c);
+                Out(c);
             }
         }
     }
-    virtual void LogLn() {
+    virtual void OutLn() {
         const char_t c = ((char_t)'\n');
-        Log(c);
-        LogFlush();
+        Out(c);
+        OutFlush();
     }
-    virtual void Log(const char_t& c) {
+    virtual void Out(const char_t& c) {
     }
-    virtual void LogFlush() {
+    virtual void OutFlush() {
     }
 };
 typedef OutputT<> Output;

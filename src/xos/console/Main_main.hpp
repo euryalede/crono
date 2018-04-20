@@ -21,7 +21,7 @@
 #ifndef _XOS_CONSOLE_MAIN_MAIN_HPP
 #define _XOS_CONSOLE_MAIN_MAIN_HPP
 
-#include "xos/base/Base.hpp"
+#include "xos/console/Main.hpp"
 
 namespace xos {
 namespace console {

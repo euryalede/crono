@@ -79,6 +79,26 @@ enum {
 } /// namespace logger
 } /// namespace xos
 
+#define XOS_LOGGING_LEVEL ::xos::logger::Level
+#define XOS_LOGGING_LEVEL_ALL ::xos::logger::LevelAll
+#define XOS_LOGGING_LEVEL_NONE ::xos::logger::LevelNone
+#define XOS_LOGGING_LEVEL_FATAL ::xos::logger::LevelFatal
+#define XOS_LOGGING_LEVEL_ERROR ::xos::logger::LevelError
+#define XOS_LOGGING_LEVEL_WARN ::xos::logger::LevelWarn
+#define XOS_LOGGING_LEVEL_INFO ::xos::logger::LevelInfo
+#define XOS_LOGGING_LEVEL_DEBUG ::xos::logger::LevelDebug
+#define XOS_LOGGING_LEVEL_TRACE ::xos::logger::LevelTrace
+
+#define XOS_LOGGING_MESSAGE_LEVEL ::xos::logger::MessageLevel
+#define XOS_LOGGING_MESSAGE_LEVEL_ALL ::xos::logger::MessageLevelAll
+#define XOS_LOGGING_MESSAGE_LEVEL_NONE ::xos::logger::MessageLevelNone
+#define XOS_LOGGING_MESSAGE_LEVEL_FATAL ::xos::logger::MessageLevelFatal
+#define XOS_LOGGING_MESSAGE_LEVEL_ERROR ::xos::logger::MessageLevelError
+#define XOS_LOGGING_MESSAGE_LEVEL_WARN ::xos::logger::MessageLevelWarn
+#define XOS_LOGGING_MESSAGE_LEVEL_INFO ::xos::logger::MessageLevelInfo
+#define XOS_LOGGING_MESSAGE_LEVEL_DEBUG ::xos::logger::MessageLevelDebug
+#define XOS_LOGGING_MESSAGE_LEVEL_TRACE ::xos::logger::MessageLevelTrace
+
 #define XOS_LOGGING_LEVELS ::xos::logger::Level
 #define XOS_LOGGING_LEVELS_ALL ::xos::logger::LevelsAll
 #define XOS_LOGGING_LEVELS_NONE ::xos::logger::LevelsNone

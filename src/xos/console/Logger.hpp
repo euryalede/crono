@@ -13,36 +13,59 @@
 /// or otherwise) arising in any way out of the use of this software, 
 /// even if advised of the possibility of such damage.
 ///
-///   File: Main_main.cpp
+///   File: Logger.hpp
 ///
 /// Author: $author$
-///   Date: 4/19/2018
+///   Date: 4/20/2018
 ///////////////////////////////////////////////////////////////////////
-#include "xos/console/Main_main.hpp"
-#include "xos/console/Logger.hpp"
+#ifndef _XOS_CONSOLE_LOGGER_HPP
+#define _XOS_CONSOLE_LOGGER_HPP
+
+#include "xos/logger/Interface.hpp"
+#include "xos/console/Io.hpp"
 
 namespace xos {
 namespace console {
 
+typedef logger::Base::Implements LoggerTImplements;
+typedef logger::Base LoggerTExtends;
+///////////////////////////////////////////////////////////////////////
+///  Class: LoggerT
+///////////////////////////////////////////////////////////////////////
+template 
+<class TImplements = LoggerTImplements, class TExtends = LoggerTExtends>
+
+class _EXPORT_CLASS LoggerT: virtual public TImplements, public TExtends {
+public:
+    typedef TImplements Implements;
+    typedef TExtends Extends;
+
+    typedef typename Implements::char_t char_t;
+    
+    LoggerT(Io &io): Extends(io), _io(io) {
+    }
+    LoggerT(): _io(_thisIo) {
+    }
+    virtual ~LoggerT() {
+    }
+private:
+    LoggerT(const LoggerT &copy) {
+    }
+
+protected:
+    virtual void Out(const char_t& c) {
+        _io.Err(&c, 1);
+    }
+    virtual void OutFlush() {
+        _io.ErrFlush();
+    }
+    
+protected:
+    Io _thisIo, &_io;
+};
+typedef LoggerT<> Logger;
+
 } /// namespace console
 } /// namespace xos
 
-///////////////////////////////////////////////////////////////////////
-/// Function: main
-///////////////////////////////////////////////////////////////////////
-int main(int argc, char** argv, char** env) {
-    int err = 1;
-    ERR_LOG_DEBUG("try {...");
-    try {
-        ::xos::console::Logger logger;
-        
-        LOG_DEBUG("::xos::console::Main::TheMain(argc, argv, env)...");
-        err = ::xos::console::Main::TheMain(argc, argv, env);
-        LOG_DEBUG("..." << err << " = ::xos::console::Main::TheMain(argc, argv, env)...");
-
-        ERR_LOG_DEBUG("...} try");
-    } catch (...) {
-        ERR_LOG_ERROR("...catch (...)");
-    }
-    return err;
-}
+#endif /// _XOS_CONSOLE_LOGGER_HPP 

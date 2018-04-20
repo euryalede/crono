@@ -106,6 +106,12 @@ public:
     typedef typename Extends::char_t char_t;
     typedef typename Extends::from_signed_t from_signed_t;
 
+    MessageT(const string_t& str): Extends(str) {
+    }
+    MessageT(const char_t* chars, size_t length): Extends(chars, length) {
+    }
+    MessageT(const char_t* chars): Extends(chars) {
+    }
     MessageT(const MessageT &copy): Extends(copy) {
     }
     MessageT() {

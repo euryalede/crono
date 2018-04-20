@@ -13,36 +13,47 @@
 /// or otherwise) arising in any way out of the use of this software, 
 /// even if advised of the possibility of such damage.
 ///
-///   File: Main_main.cpp
+///   File: Main.hpp
 ///
 /// Author: $author$
-///   Date: 4/19/2018
+///   Date: 4/20/2018
 ///////////////////////////////////////////////////////////////////////
-#include "xos/console/Main_main.hpp"
-#include "xos/console/Logger.hpp"
+#ifndef _XOS_APP_CONSOLE_CRONO_MAIN_HPP
+#define _XOS_APP_CONSOLE_CRONO_MAIN_HPP
+
+#include "xos/console/getopt/Main.hpp"
 
 namespace xos {
+namespace app {
 namespace console {
+namespace crono {
 
+typedef xos::console::getopt::Main::Implements MainTImplements;
+typedef xos::console::getopt::Main MainTExtends;
+///////////////////////////////////////////////////////////////////////
+///  Class: MainT
+///////////////////////////////////////////////////////////////////////
+template <class TImplements = MainTImplements, class TExtends = MainTExtends>
+class _EXPORT_CLASS MainT: virtual public TImplements, public TExtends {
+public:
+    typedef TImplements Implements;
+    typedef TExtends Extends;
+
+    MainT() {
+    }
+    virtual ~MainT() {
+    }
+private:
+    MainT(const MainT &copy) {
+    }
+
+protected:
+};
+typedef MainT<> Main;
+
+} /// namespace crono
 } /// namespace console
+} /// namespace app
 } /// namespace xos
 
-///////////////////////////////////////////////////////////////////////
-/// Function: main
-///////////////////////////////////////////////////////////////////////
-int main(int argc, char** argv, char** env) {
-    int err = 1;
-    ERR_LOG_DEBUG("try {...");
-    try {
-        ::xos::console::Logger logger;
-        
-        LOG_DEBUG("::xos::console::Main::TheMain(argc, argv, env)...");
-        err = ::xos::console::Main::TheMain(argc, argv, env);
-        LOG_DEBUG("..." << err << " = ::xos::console::Main::TheMain(argc, argv, env)...");
-
-        ERR_LOG_DEBUG("...} try");
-    } catch (...) {
-        ERR_LOG_ERROR("...catch (...)");
-    }
-    return err;
-}
+#endif /// _XOS_APP_CONSOLE_CRONO_MAIN_HPP 
