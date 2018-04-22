@@ -34,7 +34,9 @@ int main(int argc, char** argv, char** env) {
     int err = 1;
     ERR_LOG_DEBUG("try {...");
     try {
-        ::xos::console::Logger logger;
+        ::xos::Lock lock;
+        ::xos::console::base::Io io(lock);
+        ::xos::console::Logger logger(io);
         
         LOG_DEBUG("::xos::console::Main::TheMain(argc, argv, env)...");
         err = ::xos::console::Main::TheMain(argc, argv, env);

@@ -46,7 +46,7 @@ public:
 
     virtual void Log
     (const Level& level, const Location& location, const Message& message) {
-        Locker lock(*this);
+        Lock lock(*this);
         if ((this->IsEnabledFor(level))) {
             this->Out(location);
             this->Out(message);
@@ -55,7 +55,7 @@ public:
     }
     virtual void Log
     (const Level& level, const Function& function, const Message& message) {
-        Locker lock(*this);
+        Lock lock(*this);
         if ((this->IsEnabledFor(level))) {
             this->Out(function);
             this->Out(message);
@@ -64,7 +64,7 @@ public:
     }
     virtual void Log
     (const Level& level, const Message& message) {
-        Locker lock(*this);
+        Lock lock(*this);
         if ((this->IsEnabledFor(level))) {
             this->Out(message);
             this->OutLn();
@@ -72,19 +72,19 @@ public:
     }
 
     virtual void Log(const Location& location, const Message& message) {
-        Locker lock(*this);
+        Lock lock(*this);
         this->Out(location);
         this->Out(message);
         this->OutLn();
     }
     virtual void Log(const Function& function, const Message& message) {
-        Locker lock(*this);
+        Lock lock(*this);
         this->Out(function);
         this->Out(message);
         this->OutLn();
     }
     virtual void Log(const Message& message) {
-        Locker lock(*this);
+        Lock lock(*this);
         this->Out(message);
         this->OutLn();
     }
@@ -265,49 +265,25 @@ if ((logger)?(logger->IsEnabledFor(level_)):(false)) {\
 ///
 ///
 #define XOS_IF_LOGGED_LOCATION(isLogged_, logger_, level_, message_) { \
-if ((isLogged_)) { \
-::xos::logger::Interface* logger = logger_; \
-if ((logger)?(logger->IsEnabledFor(level_)):(false)) {\
-   ::xos::logger::Message message; \
-   logger->Log(level_, XOS_LOGGER_LOCATION, message << message_); } } }
+if ((isLogged_)) { XOS_LOG_LOCATION(logger_, level_, message_); } }
 
 #define XOS_IF_LOGGED_FUNCTION(isLogged_, logger_, level_, message_) { \
-if ((isLogged_)) { \
-::xos::logger::Interface* logger = logger_; \
-if ((logger)?(logger->IsEnabledFor(level_)):(false)) {\
-   ::xos::logger::Message message; \
-   logger->Log(level_, XOS_LOGGER_FUNCTION, message << message_); } } }
+if ((isLogged_)) { XOS_LOG_FUNCTION(logger_, level_, message_); } }
 
 #define XOS_IF_LOGGED_PLAIN(isLogged_, logger_, level_, message_) { \
-if ((isLogged_)) { \
-::xos::logger::Interface* logger = logger_; \
-if ((logger)?(logger->IsEnabledFor(level_)):(false)) {\
-   ::xos::logger::Message message; \
-   logger->Log(level_, message << message_); } } }
+if ((isLogged_)) { XOS_LOG_PLAIN(logger_, level_, message_); } }
 
 ///
 ///
 ///
-#define XOS_IS_LOGGED_LOCATION(logger_, level_, message_) { \
-if ((this->IsLogged())) { \
-::xos::logger::Interface* logger = logger_; \
-if ((logger)?(logger->IsEnabledFor(level_)):(false)) {\
-   ::xos::logger::Message message; \
-   logger->Log(level_, XOS_LOGGER_LOCATION, message << message_); } } }
+#define XOS_IS_LOGGED_LOCATION(logger_, level_, message_) \
+{ XOS_IF_LOGGED_LOCATION(this->IsLogged(), logger_, level_, message_); }
 
-#define XOS_IS_LOGGED_FUNCTION(logger_, level_, message_) { \
-if ((this->IsLogged())) { \
-::xos::logger::Interface* logger = logger_; \
-if ((logger)?(logger->IsEnabledFor(level_)):(false)) {\
-   ::xos::logger::Message message; \
-   logger->Log(level_, XOS_LOGGER_FUNCTION, message << message_); } } }
+#define XOS_IS_LOGGED_FUNCTION(logger_, level_, message_) \
+{ XOS_IF_LOGGED_FUNCTION(this->IsLogged(), logger_, level_, message_); }
 
-#define XOS_IS_LOGGED_PLAIN(logger_, level_, message_) { \
-if ((this->IsLogged())) { \
-::xos::logger::Interface* logger = logger_; \
-if ((logger)?(logger->IsEnabledFor(level_)):(false)) {\
-   ::xos::logger::Message message; \
-   logger->Log(level_, message << message_); } } }
+#define XOS_IS_LOGGED_PLAIN(logger_, level_, message_) \
+{ XOS_IF_LOGGED_PLAIN(this->IsLogged(), logger_, level_, message_); }
 
 
 ///
@@ -528,6 +504,201 @@ if ((logger)?(logger->IsEnabledFor(level_)):(false)) {\
 #endif // defined(XOS_LOCATION_MESSAGE_LOGGING)
 #endif // defined(XOS_PLAIN_MESSAGE_LOGGING)
 
+///
+/// 
+///
+#define XOS_IF_ERR_LOGGED_LOCATION_FATAL(isLogged, isErrLogged, message) \
+if (isLogged) { XOS_LOG_LOCATION_FATAL(message); } \
+else { if (isErrLogged) { XOS_ERR_LOG_LOCATION_FATAL(message); } }
+
+#define XOS_IF_ERR_LOGGED_LOCATION_ERROR(isLogged, isErrLogged, message) \
+if (isLogged) { XOS_LOG_LOCATION_ERROR(message); } \
+else { if (isErrLogged) { XOS_ERR_LOG_LOCATION_ERROR(message); } }
+
+#define XOS_IF_ERR_LOGGED_LOCATION_WARN(isLogged, isErrLogged, message) \
+if (isLogged) { XOS_LOG_LOCATION_WARN(message); } \
+else { if (isErrLogged) { XOS_ERR_LOG_LOCATION_WARN(message); } }
+
+#define XOS_IF_ERR_LOGGED_LOCATION_INFO(isLogged, isErrLogged, message) \
+if (isLogged) { XOS_LOG_LOCATION_INFO(message); } \
+else { if (isErrLogged) { XOS_ERR_LOG_LOCATION_INFO(message); } }
+
+#define XOS_IF_ERR_LOGGED_LOCATION_DEBUG(isLogged, isErrLogged, message) \
+if (isLogged) { XOS_LOG_LOCATION_DEBUG(message); } \
+else { if (isErrLogged) { XOS_ERR_LOG_LOCATION_DEBUG(message); } }
+
+#define XOS_IF_ERR_LOGGED_LOCATION_TRACE(isLogged, isErrLogged, message) \
+if (isLogged) { XOS_LOG_LOCATION_TRACE(message); } \
+else { if (isErrLogged) { XOS_ERR_LOG_LOCATION_TRACE(message); } }
+
+
+#define XOS_IF_ERR_LOGGED_FUNCTION_FATAL(isLogged, isErrLogged, message) \
+if (isLogged) { XOS_LOG_FUNCTION_FATAL(message); } \
+else { if (isErrLogged) { XOS_ERR_LOG_FUNCTION_FATAL(message); } }
+
+#define XOS_IF_ERR_LOGGED_FUNCTION_ERROR(isLogged, isErrLogged, message) \
+if (isLogged) { XOS_LOG_FUNCTION_ERROR(message); } \
+else { if (isErrLogged) { XOS_ERR_LOG_FUNCTION_ERROR(message); } }
+
+#define XOS_IF_ERR_LOGGED_FUNCTION_WARN(isLogged, isErrLogged, message) \
+if (isLogged) { XOS_LOG_FUNCTION_WARN(message); } \
+else { if (isErrLogged) { XOS_ERR_LOG_FUNCTION_WARN(message); } }
+
+#define XOS_IF_ERR_LOGGED_FUNCTION_INFO(isLogged, isErrLogged, message) \
+if (isLogged) { XOS_LOG_FUNCTION_INFO(message); } \
+else { if (isErrLogged) { XOS_ERR_LOG_FUNCTION_INFO(message); } }
+
+#define XOS_IF_ERR_LOGGED_FUNCTION_DEBUG(isLogged, isErrLogged, message) \
+if (isLogged) { XOS_LOG_FUNCTION_DEBUG(message); } \
+else { if (isErrLogged) { XOS_ERR_LOG_FUNCTION_DEBUG(message); } }
+
+#define XOS_IF_ERR_LOGGED_FUNCTION_TRACE(isLogged, isErrLogged, message) \
+if (isLogged) { XOS_LOG_FUNCTION_TRACE(message); } \
+else { if (isErrLogged) { XOS_ERR_LOG_FUNCTION_TRACE(message); } }
+
+
+#define XOS_IF_ERR_LOGGED_PLAIN_FATAL(isLogged, isErrLogged, message) \
+if (isLogged) { XOS_LOG_PLAIN_FATAL(message); } \
+else { if (isErrLogged) { XOS_ERR_LOG_PLAIN_FATAL(message); } }
+
+#define XOS_IF_ERR_LOGGED_PLAIN_ERROR(isLogged, isErrLogged, message) \
+if (isLogged) { XOS_LOG_PLAIN_ERROR(message); } \
+else { if (isErrLogged) { XOS_ERR_LOG_PLAIN_ERROR(message); } }
+
+#define XOS_IF_ERR_LOGGED_PLAIN_WARN(isLogged, isErrLogged, message) \
+if (isLogged) { XOS_LOG_PLAIN_WARN(message); } \
+else { if (isErrLogged) { XOS_ERR_LOG_PLAIN_WARN(message); } }
+
+#define XOS_IF_ERR_LOGGED_PLAIN_INFO(isLogged, isErrLogged, message) \
+if (isLogged) { XOS_LOG_PLAIN_INFO(message); } \
+else { if (isErrLogged) { XOS_ERR_LOG_PLAIN_INFO(message); } }
+
+#define XOS_IF_ERR_LOGGED_PLAIN_DEBUG(isLogged, isErrLogged, message) \
+if (isLogged) { XOS_LOG_PLAIN_DEBUG(message); } \
+else { if (isErrLogged) { XOS_ERR_LOG_PLAIN_DEBUG(message); } }
+
+#define XOS_IF_ERR_LOGGED_PLAIN_TRACE(isLogged, isErrLogged, message) \
+if (isLogged) { XOS_LOG_PLAIN_TRACE(message); } \
+else { if (isErrLogged) { XOS_ERR_LOG_PLAIN_TRACE(message); } }
+
+///
+/// 
+///
+#define XOS_IS_ERR_LOGGED_LOCATION_FATAL(message) \
+XOS_IF_ERR_LOGGED_LOCATION_FATAL(this->IsLogged(), this->IsErrLogged(), message)
+
+#define XOS_IS_ERR_LOGGED_LOCATION_ERROR(message) \
+XOS_IF_ERR_LOGGED_LOCATION_ERROR(this->IsLogged(), this->IsErrLogged(), message)
+
+#define XOS_IS_ERR_LOGGED_LOCATION_WARN(message) \
+XOS_IF_ERR_LOGGED_LOCATION_WARN(this->IsLogged(), this->IsErrLogged(), message)
+
+#define XOS_IS_ERR_LOGGED_LOCATION_INFO(message) \
+XOS_IF_ERR_LOGGED_LOCATION_INFO(this->IsLogged(), this->IsErrLogged(), message)
+
+#define XOS_IS_ERR_LOGGED_LOCATION_DEBUG(message) \
+XOS_IF_ERR_LOGGED_LOCATION_DEBUG(this->IsLogged(), this->IsErrLogged(), message)
+
+#define XOS_IS_ERR_LOGGED_LOCATION_TRACE(message) \
+XOS_IF_ERR_LOGGED_LOCATION_TRACE(this->IsLogged(), this->IsErrLogged(), message)
+
+
+#define XOS_IS_ERR_LOGGED_FUNCTION_FATAL(message) \
+XOS_IF_ERR_LOGGED_FUNCTION_FATAL(this->IsLogged(), this->IsErrLogged(), message)
+
+#define XOS_IS_ERR_LOGGED_FUNCTION_ERROR(message) \
+XOS_IF_ERR_LOGGED_FUNCTION_ERROR(this->IsLogged(), this->IsErrLogged(), message)
+
+#define XOS_IS_ERR_LOGGED_FUNCTION_WARN(message) \
+XOS_IF_ERR_LOGGED_FUNCTION_WARN(this->IsLogged(), this->IsErrLogged(), message)
+
+#define XOS_IS_ERR_LOGGED_FUNCTION_INFO(message) \
+XOS_IF_ERR_LOGGED_FUNCTION_INFO(this->IsLogged(), this->IsErrLogged(), message)
+
+#define XOS_IS_ERR_LOGGED_FUNCTION_DEBUG(message) \
+XOS_IF_ERR_LOGGED_FUNCTION_DEBUG(this->IsLogged(), this->IsErrLogged(), message)
+
+#define XOS_IS_ERR_LOGGED_FUNCTION_TRACE(message) \
+XOS_IF_ERR_LOGGED_FUNCTION_TRACE(this->IsLogged(), this->IsErrLogged(), message)
+
+
+#define XOS_IS_ERR_LOGGED_PLAIN_FATAL(message) \
+XOS_IF_ERR_LOGGED_PLAIN_FATAL(this->IsLogged(), this->IsErrLogged(), message)
+
+#define XOS_IS_ERR_LOGGED_PLAIN_ERROR(message) \
+XOS_IF_ERR_LOGGED_PLAIN_ERROR(this->IsLogged(), this->IsErrLogged(), message)
+
+#define XOS_IS_ERR_LOGGED_PLAIN_WARN(message) \
+XOS_IF_ERR_LOGGED_PLAIN_WARN(this->IsLogged(), this->IsErrLogged(), message)
+
+#define XOS_IS_ERR_LOGGED_PLAIN_INFO(message) \
+XOS_IF_ERR_LOGGED_PLAIN_INFO(this->IsLogged(), this->IsErrLogged(), message)
+
+#define XOS_IS_ERR_LOGGED_PLAIN_DEBUG(message) \
+XOS_IF_ERR_LOGGED_PLAIN_DEBUG(this->IsLogged(), this->IsErrLogged(), message)
+
+#define XOS_IS_ERR_LOGGED_PLAIN_TRACE(message) \
+XOS_IF_ERR_LOGGED_PLAIN_TRACE(this->IsLogged(), this->IsErrLogged(), message)
+
+///
+///
+///
+#if defined(XOS_PLAIN_LOGGING)
+#define XOS_IF_ERR_LOGGED_FATAL XOS_IF_ERR_LOGGED_PLAIN_FATAL
+#define XOS_IF_ERR_LOGGED_ERROR XOS_IF_ERR_LOGGED_PLAIN_ERROR
+#define XOS_IF_ERR_LOGGED_WARN  XOS_IF_ERR_LOGGED_PLAIN_WARN
+#define XOS_IF_ERR_LOGGED_INFO  XOS_IF_ERR_LOGGED_PLAIN_INFO
+#define XOS_IF_ERR_LOGGED_DEBUG XOS_IF_ERR_LOGGED_PLAIN_DEBUG
+#define XOS_IF_ERR_LOGGED_TRACE XOS_IF_ERR_LOGGED_PLAIN_TRACE
+#else // defined(XOS_PLAIN_LOGGING)
+#if defined(XOS_FUNCTION_LOGGING)
+#define XOS_IF_ERR_LOGGED_FATAL XOS_IF_ERR_LOGGED_FUNCTION_FATAL
+#define XOS_IF_ERR_LOGGED_ERROR XOS_IF_ERR_LOGGED_FUNCTION_ERROR
+#define XOS_IF_ERR_LOGGED_WARN  XOS_IF_ERR_LOGGED_FUNCTION_WARN
+#define XOS_IF_ERR_LOGGED_INFO  XOS_IF_ERR_LOGGED_FUNCTION_INFO
+#define XOS_IF_ERR_LOGGED_DEBUG XOS_IF_ERR_LOGGED_FUNCTION_DEBUG
+#define XOS_IF_ERR_LOGGED_TRACE XOS_IF_ERR_LOGGED_FUNCTION_TRACE
+#else // defined(XOS_FUNCTION_LOGGING)
+#define XOS_IF_ERR_LOGGED_FATAL XOS_IF_ERR_LOGGED_LOCATION_FATAL
+#define XOS_IF_ERR_LOGGED_ERROR XOS_IF_ERR_LOGGED_LOCATION_ERROR
+#define XOS_IF_ERR_LOGGED_WARN  XOS_IF_ERR_LOGGED_LOCATION_WARN
+#define XOS_IF_ERR_LOGGED_INFO  XOS_IF_ERR_LOGGED_LOCATION_INFO
+#define XOS_IF_ERR_LOGGED_DEBUG XOS_IF_ERR_LOGGED_LOCATION_DEBUG
+#define XOS_IF_ERR_LOGGED_TRACE XOS_IF_ERR_LOGGED_LOCATION_TRACE
+#endif // defined(XOS_FUNCTION_LOGGING)
+#endif // defined(XOS_PLAIN_LOGGING)
+
+///
+///
+///
+#if defined(XOS_PLAIN_LOGGING)
+#define XOS_IS_ERR_LOGGED_FATAL XOS_IS_ERR_LOGGED_PLAIN_FATAL
+#define XOS_IS_ERR_LOGGED_ERROR XOS_IS_ERR_LOGGED_PLAIN_ERROR
+#define XOS_IS_ERR_LOGGED_WARN  XOS_IS_ERR_LOGGED_PLAIN_WARN
+#define XOS_IS_ERR_LOGGED_INFO  XOS_IS_ERR_LOGGED_PLAIN_INFO
+#define XOS_IS_ERR_LOGGED_DEBUG XOS_IS_ERR_LOGGED_PLAIN_DEBUG
+#define XOS_IS_ERR_LOGGED_TRACE XOS_IS_ERR_LOGGED_PLAIN_TRACE
+#else // defined(XOS_PLAIN_LOGGING)
+#if defined(XOS_FUNCTION_LOGGING)
+#define XOS_IS_ERR_LOGGED_FATAL XOS_IS_ERR_LOGGED_FUNCTION_FATAL
+#define XOS_IS_ERR_LOGGED_ERROR XOS_IS_ERR_LOGGED_FUNCTION_ERROR
+#define XOS_IS_ERR_LOGGED_WARN  XOS_IS_ERR_LOGGED_FUNCTION_WARN
+#define XOS_IS_ERR_LOGGED_INFO  XOS_IS_ERR_LOGGED_FUNCTION_INFO
+#define XOS_IS_ERR_LOGGED_DEBUG XOS_IS_ERR_LOGGED_FUNCTION_DEBUG
+#define XOS_IS_ERR_LOGGED_TRACE XOS_IS_ERR_LOGGED_FUNCTION_TRACE
+#else // defined(XOS_FUNCTION_LOGGING)
+#define XOS_IS_ERR_LOGGED_FATAL XOS_IS_ERR_LOGGED_LOCATION_FATAL
+#define XOS_IS_ERR_LOGGED_ERROR XOS_IS_ERR_LOGGED_LOCATION_ERROR
+#define XOS_IS_ERR_LOGGED_WARN  XOS_IS_ERR_LOGGED_LOCATION_WARN
+#define XOS_IS_ERR_LOGGED_INFO  XOS_IS_ERR_LOGGED_LOCATION_INFO
+#define XOS_IS_ERR_LOGGED_DEBUG XOS_IS_ERR_LOGGED_LOCATION_DEBUG
+#define XOS_IS_ERR_LOGGED_TRACE XOS_IS_ERR_LOGGED_LOCATION_TRACE
+#endif // defined(XOS_FUNCTION_LOGGING)
+#endif // defined(XOS_PLAIN_LOGGING)
+
+///
+///
+///
 #if !defined(LOG_TRACE)
 #define LOG_TRACE(message_) XOS_LOG_TRACE(message_)
 #define LOG_PLAIN_TRACE(message_) XOS_LOG_PLAIN_TRACE(message_)
@@ -592,6 +763,186 @@ if ((logger)?(logger->IsEnabledFor(level_)):(false)) {\
 #define LOG_PLAIN_MESSAGE_FATAL(message_) XOS_LOG_PLAIN_MESSAGE_FATAL(message_)
 #define LOG_FUNCTION_MESSAGE_FATAL(message_) XOS_LOG_FUNCTION_MESSAGE_FATAL(message_)
 #define LOG_LOCATION_MESSAGE_FATAL(message_) XOS_LOG_LOCATION_MESSAGE_FATAL(message_)
+#endif /// !defined(LOG_FATAL)
+
+///
+///
+///
+#if !defined(IF_LOGGED_TRACE)
+#define IF_LOGGED_TRACE(isLogged_, message_) XOS_IF_LOGGED_TRACE(isLogged_, message_)
+#define IF_LOGGED_PLAIN_TRACE(isLogged_, message_) XOS_IF_LOGGED_PLAIN_TRACE(isLogged_, message_)
+#define IF_LOGGED_FUNCTION_TRACE(isLogged_, message_) XOS_IF_LOGGED_FUNCTION_TRACE(isLogged_, message_)
+#define IF_LOGGED_LOCATION_TRACE(isLogged_, message_) XOS_IF_LOGGED_LOCATION_TRACE(isLogged_, message_)
+#endif /// !defined(IF_LOGGED_TRACE)
+
+#if !defined(IF_LOGGED_DEBUG)
+#define IF_LOGGED_DEBUG(isLogged_, message_) XOS_IF_LOGGED_DEBUG(isLogged_, message_)
+#define IF_LOGGED_PLAIN_DEBUG(isLogged_, message_) XOS_IF_LOGGED_PLAIN_DEBUG(isLogged_, message_)
+#define IF_LOGGED_FUNCTION_DEBUG(isLogged_, message_) XOS_IF_LOGGED_FUNCTION_DEBUG(isLogged_, message_)
+#define IF_LOGGED_LOCATION_DEBUG(isLogged_, message_) XOS_IF_LOGGED_LOCATION_DEBUG(isLogged_, message_)
+#endif /// !defined(IF_LOGGED_DEBUG)
+
+#if !defined(IF_LOGGED_INFO)
+#define IF_LOGGED_INFO(isLogged_, message_) XOS_IF_LOGGED_INFO(isLogged_, message_)
+#define IF_LOGGED_PLAIN_INFO(isLogged_, message_) XOS_IF_LOGGED_PLAIN_INFO(isLogged_, message_)
+#define IF_LOGGED_FUNCTION_INFO(isLogged_, message_) XOS_IF_LOGGED_FUNCTION_INFO(isLogged_, message_)
+#define IF_LOGGED_LOCATION_INFO(isLogged_, message_) XOS_IF_LOGGED_LOCATION_INFO(isLogged_, message_)
+#endif /// !defined(IF_LOGGED_INFO)
+
+#if !defined(IF_LOGGED_WARN)
+#define IF_LOGGED_WARN(isLogged_, message_) XOS_IF_LOGGED_WARN(isLogged_, message_)
+#define IF_LOGGED_PLAIN_WARN(isLogged_, message_) XOS_IF_LOGGED_PLAIN_WARN(isLogged_, message_)
+#define IF_LOGGED_FUNCTION_WARN(isLogged_, message_) XOS_IF_LOGGED_FUNCTION_WARN(isLogged_, message_)
+#define IF_LOGGED_LOCATION_WARN(isLogged_, message_) XOS_IF_LOGGED_LOCATION_WARN(isLogged_, message_)
+#endif /// !defined(IF_LOGGED_WARN)
+
+#if !defined(IF_LOGGED_ERROR)
+#define IF_LOGGED_ERROR(isLogged_, message_) XOS_IF_LOGGED_ERROR(isLogged_, message_)
+#define IF_LOGGED_PLAIN_ERROR(isLogged_, message_) XOS_IF_LOGGED_PLAIN_ERROR(isLogged_, message_)
+#define IF_LOGGED_FUNCTION_ERROR(isLogged_, message_) XOS_IF_LOGGED_FUNCTION_ERROR(isLogged_, message_)
+#define IF_LOGGED_LOCATION_ERROR(isLogged_, message_) XOS_IF_LOGGED_LOCATION_ERROR(isLogged_, message_)
+#endif /// !defined(IF_LOGGED_ERROR)
+
+#if !defined(IF_LOGGED_FATAL)
+#define IF_LOGGED_FATAL(isLogged_, message_) XOS_IF_LOGGED_FATAL(isLogged_, message_)
+#define IF_LOGGED_PLAIN_FATAL(isLogged_, message_) XOS_IF_LOGGED_PLAIN_FATAL(isLogged_, message_)
+#define IF_LOGGED_FUNCTION_FATAL(isLogged_, message_) XOS_IF_LOGGED_FUNCTION_FATAL(isLogged_, message_)
+#define IF_LOGGED_LOCATION_FATAL(isLogged_, message_) XOS_IF_LOGGED_LOCATION_FATAL(isLogged_, message_)
+#endif /// !defined(LOG_FATAL)
+
+///
+///
+///
+#if !defined(IF_ERR_LOGGED_TRACE)
+#define IF_ERR_LOGGED_TRACE(isLogged_, isErrLogged_, message_) XOS_IF_ERR_LOGGED_TRACE(isLogged_, isErrLogged_, message_)
+#define IF_ERR_LOGGED_PLAIN_TRACE(isLogged_, isErrLogged_, message_) XOS_IF_ERR_LOGGED_PLAIN_TRACE(isLogged_, isErrLogged_, message_)
+#define IF_ERR_LOGGED_FUNCTION_TRACE(isLogged_, isErrLogged_, message_) XOS_IF_ERR_LOGGED_FUNCTION_TRACE(isLogged_, isErrLogged_, message_)
+#define IF_ERR_LOGGED_LOCATION_TRACE(isLogged_, isErrLogged_, message_) XOS_IF_ERR_LOGGED_LOCATION_TRACE(isLogged_, isErrLogged_, message_)
+#endif /// !defined(IF_ERR_LOGGED_TRACE)
+
+#if !defined(IF_ERR_LOGGED_DEBUG)
+#define IF_ERR_LOGGED_DEBUG(isLogged_, isErrLogged_, message_) XOS_IF_ERR_LOGGED_DEBUG(isLogged_, isErrLogged_, message_)
+#define IF_ERR_LOGGED_PLAIN_DEBUG(isLogged_, isErrLogged_, message_) XOS_IF_ERR_LOGGED_PLAIN_DEBUG(isLogged_, isErrLogged_, message_)
+#define IF_ERR_LOGGED_FUNCTION_DEBUG(isLogged_, isErrLogged_, message_) XOS_IF_ERR_LOGGED_FUNCTION_DEBUG(isLogged_, isErrLogged_, message_)
+#define IF_ERR_LOGGED_LOCATION_DEBUG(isLogged_, isErrLogged_, message_) XOS_IF_ERR_LOGGED_LOCATION_DEBUG(isLogged_, isErrLogged_, message_)
+#endif /// !defined(IF_ERR_LOGGED_DEBUG)
+
+#if !defined(IF_ERR_LOGGED_INFO)
+#define IF_ERR_LOGGED_INFO(isLogged_, isErrLogged_, message_) XOS_IF_ERR_LOGGED_INFO(isLogged_, isErrLogged_, message_)
+#define IF_ERR_LOGGED_PLAIN_INFO(isLogged_, isErrLogged_, message_) XOS_IF_ERR_LOGGED_PLAIN_INFO(isLogged_, isErrLogged_, message_)
+#define IF_ERR_LOGGED_FUNCTION_INFO(isLogged_, isErrLogged_, message_) XOS_IF_ERR_LOGGED_FUNCTION_INFO(isLogged_, isErrLogged_, message_)
+#define IF_ERR_LOGGED_LOCATION_INFO(isLogged_, isErrLogged_, message_) XOS_IF_ERR_LOGGED_LOCATION_INFO(isLogged_, isErrLogged_, message_)
+#endif /// !defined(IF_ERR_LOGGED_INFO)
+
+#if !defined(IF_ERR_LOGGED_WARN)
+#define IF_ERR_LOGGED_WARN(isLogged_, isErrLogged_, message_) XOS_IF_ERR_LOGGED_WARN(isLogged_, isErrLogged_, message_)
+#define IF_ERR_LOGGED_PLAIN_WARN(isLogged_, isErrLogged_, message_) XOS_IF_ERR_LOGGED_PLAIN_WARN(isLogged_, isErrLogged_, message_)
+#define IF_ERR_LOGGED_FUNCTION_WARN(isLogged_, isErrLogged_, message_) XOS_IF_ERR_LOGGED_FUNCTION_WARN(isLogged_, isErrLogged_, message_)
+#define IF_ERR_LOGGED_LOCATION_WARN(isLogged_, isErrLogged_, message_) XOS_IF_ERR_LOGGED_LOCATION_WARN(isLogged_, isErrLogged_, message_)
+#endif /// !defined(IF_ERR_LOGGED_WARN)
+
+#if !defined(IF_ERR_LOGGED_ERROR)
+#define IF_ERR_LOGGED_ERROR(isLogged_, isErrLogged_, message_) XOS_IF_ERR_LOGGED_ERROR(isLogged_, isErrLogged_, message_)
+#define IF_ERR_LOGGED_PLAIN_ERROR(isLogged_, isErrLogged_, message_) XOS_IF_ERR_LOGGED_PLAIN_ERROR(isLogged_, isErrLogged_, message_)
+#define IF_ERR_LOGGED_FUNCTION_ERROR(isLogged_, isErrLogged_, message_) XOS_IF_ERR_LOGGED_FUNCTION_ERROR(isLogged_, isErrLogged_, message_)
+#define IF_ERR_LOGGED_LOCATION_ERROR(isLogged_, isErrLogged_, message_) XOS_IF_ERR_LOGGED_LOCATION_ERROR(isLogged_, isErrLogged_, message_)
+#endif /// !defined(IF_ERR_LOGGED_ERROR)
+
+#if !defined(IF_ERR_LOGGED_FATAL)
+#define IF_ERR_LOGGED_FATAL(isLogged_, isErrLogged_, message_) XOS_IF_ERR_LOGGED_FATAL(isLogged_, isErrLogged_, message_)
+#define IF_ERR_LOGGED_PLAIN_FATAL(isLogged_, isErrLogged_, message_) XOS_IF_ERR_LOGGED_PLAIN_FATAL(isLogged_, isErrLogged_, message_)
+#define IF_ERR_LOGGED_FUNCTION_FATAL(isLogged_, isErrLogged_, message_) XOS_IF_ERR_LOGGED_FUNCTION_FATAL(isLogged_, isErrLogged_, message_)
+#define IF_ERR_LOGGED_LOCATION_FATAL(isLogged_, isErrLogged_, message_) XOS_IF_ERR_LOGGED_LOCATION_FATAL(isLogged_, isErrLogged_, message_)
+#endif /// !defined(LOG_FATAL)
+
+///
+///
+///
+#if !defined(IS_LOGGED_TRACE)
+#define IS_LOGGED_TRACE(message_) XOS_IS_LOGGED_TRACE(message_)
+#define IS_LOGGED_PLAIN_TRACE(message_) XOS_IS_LOGGED_PLAIN_TRACE(message_)
+#define IS_LOGGED_FUNCTION_TRACE(message_) XOS_IS_LOGGED_FUNCTION_TRACE(message_)
+#define IS_LOGGED_LOCATION_TRACE(message_) XOS_IS_LOGGED_LOCATION_TRACE(message_)
+#endif /// !defined(IS_LOGGED_TRACE)
+
+#if !defined(IS_LOGGED_DEBUG)
+#define IS_LOGGED_DEBUG(message_) XOS_IS_LOGGED_DEBUG(message_)
+#define IS_LOGGED_PLAIN_DEBUG(message_) XOS_IS_LOGGED_PLAIN_DEBUG(message_)
+#define IS_LOGGED_FUNCTION_DEBUG(message_) XOS_IS_LOGGED_FUNCTION_DEBUG(message_)
+#define IS_LOGGED_LOCATION_DEBUG(message_) XOS_IS_LOGGED_LOCATION_DEBUG(message_)
+#endif /// !defined(IS_LOGGED_DEBUG)
+
+#if !defined(IS_LOGGED_INFO)
+#define IS_LOGGED_INFO(message_) XOS_IS_LOGGED_INFO(message_)
+#define IS_LOGGED_PLAIN_INFO(message_) XOS_IS_LOGGED_PLAIN_INFO(message_)
+#define IS_LOGGED_FUNCTION_INFO(message_) XOS_IS_LOGGED_FUNCTION_INFO(message_)
+#define IS_LOGGED_LOCATION_INFO(message_) XOS_IS_LOGGED_LOCATION_INFO(message_)
+#endif /// !defined(IS_LOGGED_INFO)
+
+#if !defined(IS_LOGGED_WARN)
+#define IS_LOGGED_WARN(message_) XOS_IS_LOGGED_WARN(message_)
+#define IS_LOGGED_PLAIN_WARN(message_) XOS_IS_LOGGED_PLAIN_WARN(message_)
+#define IS_LOGGED_FUNCTION_WARN(message_) XOS_IS_LOGGED_FUNCTION_WARN(message_)
+#define IS_LOGGED_LOCATION_WARN(message_) XOS_IS_LOGGED_LOCATION_WARN(message_)
+#endif /// !defined(IS_LOGGED_WARN)
+
+#if !defined(IS_LOGGED_ERROR)
+#define IS_LOGGED_ERROR(message_) XOS_IS_LOGGED_ERROR(message_)
+#define IS_LOGGED_PLAIN_ERROR(message_) XOS_IS_LOGGED_PLAIN_ERROR(message_)
+#define IS_LOGGED_FUNCTION_ERROR(message_) XOS_IS_LOGGED_FUNCTION_ERROR(message_)
+#define IS_LOGGED_LOCATION_ERROR(message_) XOS_IS_LOGGED_LOCATION_ERROR(message_)
+#endif /// !defined(IS_LOGGED_ERROR)
+
+#if !defined(IS_LOGGED_FATAL)
+#define IS_LOGGED_FATAL(message_) XOS_IS_LOGGED_FATAL(message_)
+#define IS_LOGGED_PLAIN_FATAL(message_) XOS_IS_LOGGED_PLAIN_FATAL(message_)
+#define IS_LOGGED_FUNCTION_FATAL(message_) XOS_IS_LOGGED_FUNCTION_FATAL(message_)
+#define IS_LOGGED_LOCATION_FATAL(message_) XOS_IS_LOGGED_LOCATION_FATAL(message_)
+#endif /// !defined(LOG_FATAL)
+
+///
+///
+///
+#if !defined(IS_ERR_LOGGED_TRACE)
+#define IS_ERR_LOGGED_TRACE(message_) XOS_IS_ERR_LOGGED_TRACE(message_)
+#define IS_ERR_LOGGED_PLAIN_TRACE(message_) XOS_IS_ERR_LOGGED_PLAIN_TRACE(message_)
+#define IS_ERR_LOGGED_FUNCTION_TRACE(message_) XOS_IS_ERR_LOGGED_FUNCTION_TRACE(message_)
+#define IS_ERR_LOGGED_LOCATION_TRACE(message_) XOS_IS_ERR_LOGGED_LOCATION_TRACE(message_)
+#endif /// !defined(IS_ERR_LOGGED_TRACE)
+
+#if !defined(IS_ERR_LOGGED_DEBUG)
+#define IS_ERR_LOGGED_DEBUG(message_) XOS_IS_ERR_LOGGED_DEBUG(message_)
+#define IS_ERR_LOGGED_PLAIN_DEBUG(message_) XOS_IS_ERR_LOGGED_PLAIN_DEBUG(message_)
+#define IS_ERR_LOGGED_FUNCTION_DEBUG(message_) XOS_IS_ERR_LOGGED_FUNCTION_DEBUG(message_)
+#define IS_ERR_LOGGED_LOCATION_DEBUG(message_) XOS_IS_ERR_LOGGED_LOCATION_DEBUG(message_)
+#endif /// !defined(IS_ERR_LOGGED_DEBUG)
+
+#if !defined(IS_ERR_LOGGED_INFO)
+#define IS_ERR_LOGGED_INFO(message_) XOS_IS_ERR_LOGGED_INFO(message_)
+#define IS_ERR_LOGGED_PLAIN_INFO(message_) XOS_IS_ERR_LOGGED_PLAIN_INFO(message_)
+#define IS_ERR_LOGGED_FUNCTION_INFO(message_) XOS_IS_ERR_LOGGED_FUNCTION_INFO(message_)
+#define IS_ERR_LOGGED_LOCATION_INFO(message_) XOS_IS_ERR_LOGGED_LOCATION_INFO(message_)
+#endif /// !defined(IS_ERR_LOGGED_INFO)
+
+#if !defined(IS_ERR_LOGGED_WARN)
+#define IS_ERR_LOGGED_WARN(message_) XOS_IS_ERR_LOGGED_WARN(message_)
+#define IS_ERR_LOGGED_PLAIN_WARN(message_) XOS_IS_ERR_LOGGED_PLAIN_WARN(message_)
+#define IS_ERR_LOGGED_FUNCTION_WARN(message_) XOS_IS_ERR_LOGGED_FUNCTION_WARN(message_)
+#define IS_ERR_LOGGED_LOCATION_WARN(message_) XOS_IS_ERR_LOGGED_LOCATION_WARN(message_)
+#endif /// !defined(IS_ERR_LOGGED_WARN)
+
+#if !defined(IS_ERR_LOGGED_ERROR)
+#define IS_ERR_LOGGED_ERROR(message_) XOS_IS_ERR_LOGGED_ERROR(message_)
+#define IS_ERR_LOGGED_PLAIN_ERROR(message_) XOS_IS_ERR_LOGGED_PLAIN_ERROR(message_)
+#define IS_ERR_LOGGED_FUNCTION_ERROR(message_) XOS_IS_ERR_LOGGED_FUNCTION_ERROR(message_)
+#define IS_ERR_LOGGED_LOCATION_ERROR(message_) XOS_IS_ERR_LOGGED_LOCATION_ERROR(message_)
+#endif /// !defined(IS_ERR_LOGGED_ERROR)
+
+#if !defined(IS_ERR_LOGGED_FATAL)
+#define IS_ERR_LOGGED_FATAL(message_) XOS_IS_ERR_LOGGED_FATAL(message_)
+#define IS_ERR_LOGGED_PLAIN_FATAL(message_) XOS_IS_ERR_LOGGED_PLAIN_FATAL(message_)
+#define IS_ERR_LOGGED_FUNCTION_FATAL(message_) XOS_IS_ERR_LOGGED_FUNCTION_FATAL(message_)
+#define IS_ERR_LOGGED_LOCATION_FATAL(message_) XOS_IS_ERR_LOGGED_LOCATION_FATAL(message_)
 #endif /// !defined(LOG_FATAL)
 
 #endif /// _XOS_LOGGER_INTERFACE_HPP 
